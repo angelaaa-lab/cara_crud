@@ -26,7 +26,7 @@ $error = "";
         if(mysqli_num_rows($result) == 1);
         $user = mysqli_fetch_assoc($result);
         //Compare typed password with database
-        if(password_verify($password, $user["password"])){
+        if(password_verify($user, $password["password"])){
             $_SESSION["user_id"] = $user['id'];
             $_SESSION["full_name"] = $user['full_name'];
             $_SESSION["role"] = $user['role'];

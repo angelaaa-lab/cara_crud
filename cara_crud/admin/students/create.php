@@ -1,35 +1,36 @@
-<?php 
-session_start();
-include "../../config/database.php";
-
-//only admin user can access this page.
-
-if(!isset($_SESSION["role"]) || $_SESSION["role"] != "admin"){
-    header("Location: ../../index.php");
-    exit;
-    $message = "";
-}
-if(isset($_POST["save"])){
-    //COLLECT ALL DATA FROM YOUR FORM
-    $student_no = $_POST["student_no"];
-    $full_name = $_POST["full_name"];
-    $username = $_POST["username"];
-    $password = password_hash($_POOST["password"], PASSWORD_DEFAULT);
-    //INSERT RECORD SQL
-        $sql = "INSERT INTO users (student_no,full_name,username,password,role)
-        VALUES ('$student_name','$full_name', '$username', '$password', 'student')";
-
-        if(mysqli_query($conn, $sql)){
-            header("Location: index.php?message=Student Added Successfully");
-            exit;
+<?php
+    session_start();
+        include "../../config/database.php";
+        //only admin can acccess this page
+        if(!isset($_SESSION["role"]) || $_SESSION ["role"] != "admin") {
+            header("Location: ../../index.php");
+            exit();
         }
-        else{
-            $message = "Could not save the student record";
+        $message = "";
+        if(isset($_POST["save"])){
+            //Collect data from form
+            $student_no = $_POST["student_no"];
+            $full_name = $_POST["full_name"];
+            $username = $_POST["username"];
+            $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+            $sql = "INSERT INTO users (`student_no`, `full_name`, `username`, `password`, `role`)
+            VALUES ('$student_no', '$full_name', '$username', '$password', 'student')";
+
+            if(mysqli_query($conn, $sql)){
+                header("Location: index.php?message=Student added successfully! ");
+                exit;
+            }
+            else {
+                $message = "Could not save the record.";
+            }
+            
+
         }
 
-     }
+        
 
- ?>
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -53,10 +54,12 @@ if(isset($_POST["save"])){
 <body class="bg-light">
 
     <!-- Main Container -->
-    <div
-        class="container py-5"
-        style="max-width: 700px;"
-    >
+    <div   style="max-width: 700px;" class="container py-5">
+        
+        <?php  if($message != ""){ ?>
+                    <div class = "alert alert-danger"> <?php echo $message; ?></div>
+                <?php } ?>
+      
 
         <!-- Student Form Card -->
         <div class="card border-0 shadow-sm">
@@ -64,10 +67,9 @@ if(isset($_POST["save"])){
             <div class="card-body p-4">
 
                 <h2>Student Account Form</h2>
-                <?php if($message != ""){?>
-                <div class="alert alert-danger"><?php echo $message;?></div>
-                    <?php } ?>
-                <form method="POST">
+                
+
+                <form method = "POST">
 
                     <!-- Student Number -->
                     <div class="mb-3">
@@ -113,14 +115,14 @@ if(isset($_POST["save"])){
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        name="save"
+                        name = "save"
                     >
                         Save Student
                     </button>
 
                     <a
-                        href="students.html"
-                        class="btn btn-secondary"
+                        href="index.php"
+                        class="btn btn-secondary"       
                     >
                         Cancel
                     </a>
