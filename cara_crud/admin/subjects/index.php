@@ -1,29 +1,30 @@
+<?php
+session_start();
+include "../../config/database.php";
 
+// Only admin can access this page.
+if (!isset($_SESSION["role"]) || $_SESSION["role"] != "admin") {
+    header("Location: ../../index.php");
+    exit;
+}
+
+$sql = "SELECT * FROM subjects ORDER BY id DESC";
+$result = mysqli_query($conn, $sql);
+?>
 
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Subjects</title>
 
     <!-- Bootstrap CSS -->
-    <link
-        href="../../assets/vendor/bootstrap/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link
-        href="../../assets/css/style.css"
-        rel="stylesheet"
-    >
+    <link href="../../assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -31,14 +32,9 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-
-            <a
-                class="navbar-brand"
-                href="dashboard.html"
-            >
+            <a class="navbar-brand" href="dashboard.html">
                 Student Portal Admin
             </a>
-
         </div>
     </nav>
 
@@ -47,31 +43,23 @@
 
         <!-- Header Section -->
         <div class="d-flex justify-content-between mb-3">
-
             <div>
                 <h2>Subjects</h2>
-
-                <a href="dashboard.html">
+                <a href="../dashboard.php">
                     ← Dashboard
                 </a>
             </div>
 
-            <a
-                href="subject_form.html"
-                class="btn btn-primary"
-            >
+            <a href="create.php" class="btn btn-primary">
                 + Add Subject
             </a>
-
         </div>
 
         <!-- Subjects List Card -->
         <div class="card">
-
             <div class="card-body">
 
                 <table class="table">
-
                     <thead>
                         <tr>
                             <th>Code</th>
@@ -80,41 +68,34 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-
                     <tbody>
 
-                        <!-- Subject Record -->
+                        <!-- Subject Record Loop -->
+                        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                         <tr>
-                            <td>IT101</td>
-
+                            <td><?php echo htmlspecialchars($row["subject_code"]); ?></td>
+                            <td><?php echo htmlspecialchars($row["subject_name"]); ?></td>
+                            <td><?php echo htmlspecialchars($row["units"]); ?></td>
                             <td>
-                                Introduction to Computing
-                            </td>
-
-                            <td>3</td>
-
-                            <td>
-                                <a
-                                    href="subject_form.html"
-                                    class="btn btn-warning btn-sm"
-                                >
+                                <a href="subject_form.html" class="btn btn-warning btn-sm">
                                     Edit
                                 </a>
-
-                                <button
+                                <a
+                                    href="deletesubj.php?id=<?php echo $row['id'];?>"
                                     class="btn btn-danger btn-sm"
+                                    onclick="return confirm('are you sure you want to delete this record?')"
                                 >
                                     Delete
-                                </button>
+                                </a>
+                               
                             </td>
                         </tr>
+                        <?php } ?>
 
                     </tbody>
-
                 </table>
 
             </div>
-
         </div>
 
     </div>

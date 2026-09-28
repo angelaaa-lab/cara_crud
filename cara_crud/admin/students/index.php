@@ -1,17 +1,16 @@
-<? 
-session_start();
-include "../../config/database.php";
+<?php 
+    session_start();
+    include "../../config/database.php";
+    //only admin can acccess this page
+    if(!isset($_SESSION["role"]) || $_SESSION ["role"] != "admin") {
+        header("Location: ../../index.php");
+        exit();
+    }
+    $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY id DESC ";
+    $result = mysqli_query($conn, $sql);
 
-//only admin user can access this page.
-
-if(!isset($_SESSION["role"]) || $_SESSION["role"] != "admin"){
-    header("Location: ../../index.php");
-    exit;
-}
-
-$sql = "SELECT * FROM users WHERE role='student' ORDER BY id DESC";
-$result = mysqli_query($conn, $sql);
 ?>
+
 <!doctype html>
 <html lang="en">
 
@@ -56,15 +55,15 @@ $result = mysqli_query($conn, $sql);
 
     <!-- Main Content -->
     <div class="container py-4">
-        <?php if (isset($_GET["message"])){?>
-        <div class="alert alert-success"> <?php echo $_GET["message"]; ?> </div>
-         <?php } ?>
 
         <!-- Header Section -->
         <div class="d-flex justify-content-between mb-3">
 
             <div>
                 <h2>Student Accounts</h2>
+                <?php if(isset($_GET["message"])){ ?>
+                <div class = "alert-success"><?php echo $_GET["message"]; ?> </div>
+                <?php } ?>
 
                 <a href="../dashboard.php">
                     ← Dashboard
@@ -98,16 +97,16 @@ $result = mysqli_query($conn, $sql);
                     <tbody>
 
                         <!-- Student Record -->
-                         <?php while($row=mysqli_fetch_assoc($result)){?>
+                         <?php while($row = mysqli_fetch_assoc($result)){ ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row["student_no"]); ?></td>
+                            <td><?php echo htmlspecialchars($row["student_no"]) ?></td>
 
                             <td>
-                                <?php echo htmlspecialchars($row["full_name"]); ?>
+                                <?php echo htmlspecialchars($row["full_name"]) ?>
                             </td>
 
                             <td>
-                               <?php echo htmlspecialchars($row["username"]); ?>
+                                <?php echo htmlspecialchars($row["username"]) ?>
                             </td>
 
                             <td>
@@ -125,15 +124,16 @@ $result = mysqli_query($conn, $sql);
                                     Edit
                                 </a>
 
-                                <button
+                                <a
+                                    href="delete.php?id=<?php echo $row['id'];?>"
                                     class="btn btn-danger btn-sm"
+                                    onclick="return confirm('are you sure you want to delete this record?')"
                                 >
                                     Delete
-                                </button>
+                                </a>
                             </td>
                         </tr>
                         <?php } ?>
-
                     </tbody>
 
                 </table>

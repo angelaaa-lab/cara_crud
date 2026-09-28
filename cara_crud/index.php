@@ -16,31 +16,36 @@ if(isset($_SESSION["role"])){
  
 }
 $error = "";
-    if(isset($_POST["login"])){
-        //Get data from login form.
-        $username = mysqli_escape_string($conn, $_POST["username"]);
-        $password = $_POST["password"]; 
-        //Find the user by username
-        $sql = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
-        $result = mysqli_query($conn, $sql);
-        if(mysqli_num_rows($result) == 1);
-        $user = mysqli_fetch_assoc($result);
-        //Compare typed password with database
-        if(password_verify($password, $user["password"])){
-            $_SESSION["user_id"] = $user['id'];
-            $_SESSION["full_name"] = $user['full_name'];
-            $_SESSION["role"] = $user['role'];
+if (isset($_POST["login"])) {
+    // Get data from login form
+    $username = mysqli_escape_string($conn, $_POST["username"]);
+    $password = $_POST["password"];
 
-            if($user["role"] == "admin"){
+    // Find the user by username
+    $sql = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) == 1) {
+        $user = mysqli_fetch_assoc($result);
+
+        // Compare typed password with hashed password in database
+        if (password_verify($password, $user["password"])) {
+            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["full_name"] = $user["full_name"];
+            $_SESSION["role"] = $user["role"];
+
+            if ($user["role"] == "admin") {
                 header("Location: admin/dashboard.php");
-            }
-            else{
+            } else {
                 header("Location: student/dashboard.php");
             }
+
             exit();
         }
-        $error = "Invalid username or password";
     }
+
+    $error = "Invalid username or password";
+}
     
 ?>
 
