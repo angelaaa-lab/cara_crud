@@ -77,7 +77,8 @@ $result = mysqli_query($conn, $sql);
                             <td><?php echo htmlspecialchars($row["subject_name"]); ?></td>
                             <td><?php echo htmlspecialchars($row["units"]); ?></td>
                             <td>
-                                <a href="subject_form.html" class="btn btn-warning btn-sm">
+                                <a href="edit.php?id= <?php echo $row['id'];?>"
+                                class="btn btn-warning btn-sm">
                                     Edit
                                 </a>
                                 <a
